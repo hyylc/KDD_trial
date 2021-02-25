@@ -2,12 +2,13 @@
 import service from "../utils/request.js"
 
 
-export function del_user(userinfo){
+export function sign_up(){
     return service.request({
         method : "post",
-        url : "/delete_user",//对应flask里的路由
+        url : "/user_sign_up",//对应flask里的路由
         data:{
-            user_id : userinfo
+            uname : 'lcj',
+            upwd : 'lcj19961119'
         }
     });
 };

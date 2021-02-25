@@ -2,7 +2,7 @@ from pymysql import connect
 from flask import Flask,request,render_template,flash,session
 from pymysql.cursors import DictCursor # 得到字典形式的返回
 
-class User(object):
+class SetQ(object):
     def __init__(self): # 创建对象同时要执行的代码
         self.conn = connect(
             host = '127.0.0.1',
@@ -17,10 +17,11 @@ class User(object):
     def __del__(self): # 释放对象同时要执行的代码
         self.cursor.close()
         self.conn.close()
-    
-    #用户注册
-    def sign_up(self,item):
-        sql = "select COUNT(*) from user"
+
+
+    # 插入一个问题集合
+    def new_setQ(self,param):
+        sql = "select COUNT(*) from setq"
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
@@ -28,7 +29,7 @@ class User(object):
         except:
             self.conn.rollback()                   # Rollback in case there is any error
         id_count = self.cursor.fetchone()['COUNT(*)']
-        sql = "insert into user values (" + str(id_count+1) + ",'" + item['name'] + "','" + item['pwd'] + "')"
+        sql = "insert into setq values (" + str(id_count+1) + ",'" + param['desc'] + "','" + param['pf'] + "','" + param['b'] + ")"
         print(sql)
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
@@ -38,15 +39,11 @@ class User(object):
             self.conn.rollback()                   # Rollback in case there is any error
             return False
 
-    #查询用户名是否已存在
-
-
-    #登录处理（查询用户名和密码是否存在）
-    def sign_in(self,item):
-        # 查找普通用户
-        sql = "select * from user where user_name = %s and user_password = %s"
-        self.cursor.execute(sql,[item['name'],item['pwd']])
-        # 处理结果，查询单条数据，无需提交
+    # 查询一个问题集合
+    def setq_detail(self,param):
+        # 查询问题集合表返回问题集合的描述和参数设置
+        # （同时也要查询问题表）
+        sql = "select * from setq where idsetQ = " + str(param['id'])
+        self.cursor.execute(sql)
         rs = self.cursor.fetchone()
         return rs
-
