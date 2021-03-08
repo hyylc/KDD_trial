@@ -29,7 +29,7 @@ class Weight(object):
             self.conn.rollback()                   # Rollback in case there is any error
         id_count = len(self.cursor.fetchone())
         if id_count == 1:
-            sql = "update weight set weight = " + str(param['weight']) + " where user_id = " + str(param['user_id']) + " and setq_id = " + str(param['setq_id'])
+            sql = "update weight set weight_one = " + str(param['weight1']) + " and weight_two = " + str(param['weight2']) + " where user_id = " + str(param['user_id']) + " and setq_id = " + str(param['setq_id'])
             print(sql)
             try:
                 self.cursor.execute(sql)             # 执行单条sql语句
@@ -62,3 +62,4 @@ class Weight(object):
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
         return rs
+    

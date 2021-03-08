@@ -29,7 +29,7 @@ class Ans(object):
         except:
             self.conn.rollback()                   # Rollback in case there is any error
         id_count = self.cursor.fetchone()['COUNT(*)']
-        sql = "insert into ans values (" + str(id_count+1) + "," + str(param['user_id']) + "," + str(param['q_id']) + "," + str(param['ans1']) + "," + str(param['ans2']) + ")"
+        sql = "insert into ans values (" + str(id_count+1) + "," + str(param['user_id']) + "," + str(param['q_id']) + "," + str(param['ans1']) + "," + str(param['ans2']) + "," + str(param['pf']) + "," + str(param['b']) + ")"
         print(sql)
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
@@ -42,6 +42,20 @@ class Ans(object):
     # 查询一个问题的所有回答
     def allans(self,param):
         sql = 'select * from ans where q_id = ' + str(param['id_q'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+
+    # 查询一个问题的所有回答-用户id
+    def allans_userid(self,param):
+        sql = 'select user_id from ans where q_id = ' + str(param['id_q'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+
+    # 查询某个用户对某个问题的回答
+    def allans_q_user(self,param):
+        sql = "select ans_one,ans_two from ans where q_id = " + str(param['id_q']) + " and user_id = " + str(param['id_user']) 
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
         return rs

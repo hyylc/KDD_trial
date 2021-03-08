@@ -52,3 +52,36 @@ class Q(object):
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
         return rs
+
+    # 返回问题集合的所有问题id
+    def allq_id(self,param):
+        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+
+    # 将聚合的回答保存到数据库中（考虑后续会更新的问题）
+    def set_q_MV_one(self,param):
+        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+
+    def set_q_MV_two(self,param):
+        sql = 'update q set q_MV_two = ' + str(param['ans']) + ' where q_id_of_setq = ' + str(param['id_setq'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+    
+    def set_q_TD_one(self,param):
+        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+
+    def set_q_TD_two(self,param):
+        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq'])
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchall()
+        return rs
+        

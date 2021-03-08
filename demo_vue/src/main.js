@@ -11,8 +11,10 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import FishUI from 'fish-ui'
 
 
+Vue.use(FishUI)
 Vue.use(ElementUI);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
