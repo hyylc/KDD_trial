@@ -14,7 +14,15 @@
                 <fish-input v-model="setq_des"></fish-input>
             </fish-field>
             <fish-field label="问题数量" span="2" name="setq_num" :rules="[{ required: true, message: 'not empty'}]">
-                <fish-input-number min="0" max="30" v-model="setq_q_num"></fish-input-number>
+                <fish-input-number min="-1" max="30" v-model="setq_q_num"></fish-input-number>
+            </fish-field>
+        </fish-fields>
+        <fish-fields >
+            <fish-field label="one-layer mechanism参数设置：扰动概率pf" span="10" name="setq_pf" :rules="[{ required: true, message: 'not empty'}]">
+                <fish-input-number min="-0.01" max="0.55" step="0.05" v-model="setq_pf"></fish-input-number>
+            </fish-field>
+            <fish-field label="two-layer mechanism参数设置：均匀分布参数b（默认是pf的两倍）" span="10" name="setq_b" :rules="[{ required: true, message: 'not empty'}]">
+                <fish-input-number min="-0.01" max="1.10" step="0.1" v-model="setq_b"></fish-input-number>
             </fish-field>
         </fish-fields>
         <div v-for="count of setq_q_num" :key="count"> 
@@ -23,7 +31,7 @@
                     <fish-input v-model="q_list[count].des"></fish-input>
                 </fish-field>
                 <fish-field label="Q选项数量" span="2" name="q_num" :rules="[{ required: true, message: 'not empty'}]">
-                    <fish-input-number min="0" max="30" v-model="q_list[count].num"></fish-input-number>
+                    <fish-input-number min="-1" max="30" v-model="q_list[count].num"></fish-input-number>
                 </fish-field>
             </fish-fields>
             <div v-for="count1 of q_list[count].num" :key="count1"> 
@@ -49,39 +57,56 @@ export default {
   name: 'admin_q_edit',
   components: {
   },
-  data() {
-    return {
-        data: [],
-        setq_des: '',
-        setq_q_num: 0,
-        q_list: [],
-        age:''
+    data() {
+        return {
+            data: [],
+            setq_des: '',
+            setq_q_num: 0,
+            q_list: [],
+            age:'',
+            setq_pf: 0.0,
+            setq_b: 0.0,
+        }
+    },
+    watch:{
+        'setq_pf' : {
+            handler(){
+                this.setq_b = this.setq_pf * 2;
+            }
+        },
+        'setq_b' : {
+            handler(){
+                this.setq_pf = this.setq_b / 2;
+            }
+        }
+    },
+    created() {
+        this.mem();
+        this.setq_b = this.setq_pf*2;
+    },
+    methods: {
+        mem(){
+            for(var i = 0; i < 31; i++){
+                //使用set初始化，使数组数据成为响应式，可以实时监测
+                //好像还有使用watch的方法
+                this.$set(this.q_list,i,{ num: 0, des: '',ans_list: []});
+                for(var j = 0; j < 31; j++){
+                    this.q_list[i].ans_list[j] = ''
+                } 
+            };
+        },
+        print_qlist(){
+            console.log(this.q_list);
+            console.log(this.setq_q_num)
+        },
+        publish(){
+            console.log(this.setq_des);
+            console.log(this.setq_q_num);
+            console.log(this.setq_pf);
+            console.log(this.setq_b)
+        },
+        
     }
-  },
-  created() {
-      this.mem()
-  },
-  methods: {
-      mem(){
-          for(var i = 0; i < 31; i++){
-              //使用set初始化，使数组数据成为响应式，可以实时监测
-              //好像还有使用watch的方法
-              this.$set(this.q_list,i,{ num: 0, des: '',ans_list: []});
-              for(var j = 0; j < 31; j++){
-                  this.q_list[i].ans_list[j] = ''
-              }
-              
-          };
-      },
-      print_qlist(){
-          console.log(this.q_list);
-          console.log(this.setq_q_num)
-      },
-      publish(){
-          
-      },
-      
-  }
 }
 </script>
 

@@ -32,3 +32,20 @@ export function get_all_setq(){
         }
     });
 };
+
+export function new_setq(param){
+    return service.request({
+        method : "post",
+        url : "/new_setQ",//对应flask里的路由
+        data:{
+            desc : param.desc,
+            pf : param.pf,
+            b : param.b
+        }
+        //  param = {
+        //     'desc' : get_data['desc'],
+        //     'pf' : get_data['pf'],
+        //     'b' : get_data['b']
+        // }
+    });
+};
