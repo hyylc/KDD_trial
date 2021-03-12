@@ -21,20 +21,24 @@ class SetQ(object):
 
     # 插入一个问题集合
     def new_setQ(self,param):
-        sql = "select COUNT(*) from setq"
+        sql = "select MAX(idsetq) from setq"
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
             #return True
         except:
             self.conn.rollback()                   # Rollback in case there is any error
-        id_count = self.cursor.fetchone()['COUNT(*)']
-        sql = "insert into setq values (" + str(id_count+1) + ",'" + param['desc'] + "','" + param['pf'] + "','" + param['b'] + ")"
+        rs = self.cursor.fetchone()
+        if rs['MAX(idsetq)'] == None:
+            id_count = 0
+        else:
+            id_count = rs['MAX(idsetq)']
+        sql = "insert into setq values (" + str(id_count+1) + ",'" + str(param['desc']) + "'," + str(param['pf']) + "," + str(param['b']) + ")"
         print(sql)
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
-            return True
+            return str(id_count+1)
         except:
             self.conn.rollback()                   # Rollback in case there is any error
             return False

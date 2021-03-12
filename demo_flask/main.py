@@ -12,6 +12,7 @@ from setq import SetQ
 from q import Q
 from ans import Ans
 from weight import Weight
+from option import Option
 
 """
 接口说明：
@@ -254,17 +255,17 @@ def new_setQ():
         }
         sq = SetQ()
         data = sq.new_setQ(param)
-        if data == True:
+        if data == False:
             resData = {
-                "resCode" : 0,            
+                "resCode" : 1,            
                 "data" : [],
-                "message" : '已添加该问题集合'
+                "message" : '添加失败'
             }
             return jsonify(resData)
         resData = {
-            "resCode" : 1,            
-            "data" : [],
-            "message" : '添加失败'
+            "resCode" : 0,            
+            "data" : data,
+            "message" : '已添加该问题'
         }
         return jsonify(resData)
     else:
@@ -275,7 +276,7 @@ def new_setQ():
         }
         return jsonify(resData)
 
-# 查看问题集合详情（涉及问题集合表，问题表）
+# 查看问题集合详情（涉及问题集合表，问题表，选项表）
 @app.route('/setq_detail',methods=['POST','GET'])
 def setq_detail():
     if request.method == 'POST':
@@ -374,17 +375,17 @@ def new_Q():
         }
         q = Q()
         data = q.new_Q(param)
-        if data == True:
+        if data == False:
             resData = {
-                "resCode" : 0,            
-                "data" : data,
-                "message" : '已添加该问题'
+                "resCode" : 1,            
+                "data" : [],
+                "message" : '添加失败'
             }
             return jsonify(resData)
         resData = {
-            "resCode" : 1,            
-            "data" : [],
-            "message" : '添加失败'
+            "resCode" : 0,            
+            "data" : data,
+            "message" : '已添加该问题'            
         }
         return jsonify(resData)
     else:
@@ -395,7 +396,7 @@ def new_Q():
         }
         return jsonify(resData)
 
-# 查看问题详情（查询问题表，回答表）
+# 查看问题详情（查询问题表，回答表，选项表）
 @app.route('/q_detail',methods=['POST','GET'])
 def q_detail():
     if request.method == 'POST':
@@ -418,6 +419,40 @@ def q_detail():
             "resCode" : 0,   
             "data" : [qdata,adata],
             "message" : '查询成功'
+        }
+        return jsonify(resData)
+    else:
+        resData = {
+            "resCode" : 1,            
+            "data" : [],
+            "message" : '请求方式错误'
+        }
+        return jsonify(resData)
+
+#************选项接口************
+@app.route('/new_Option',methods=['POST','GET'])
+def new_Option():
+    if request.method == 'POST':
+        get_data = json.loads(request.get_data(as_text = True))
+        param = {
+            'q_id' : get_data['q_id'],
+            'desc' : get_data['desc'],
+            # 这个num是选项在问题中的编号
+            'num' : get_data['num']
+        }
+        o = Option()
+        data = o.new_Option(param)
+        if data == False:
+            resData = {
+                "resCode" : 1,            
+                "data" : [],
+                "message" : '添加失败'
+            }
+            return jsonify(resData)
+        resData = {
+            "resCode" : 0,            
+            "data" : data,
+            "message" : '已添加该选项'            
         }
         return jsonify(resData)
     else:

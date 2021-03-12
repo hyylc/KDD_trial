@@ -51,7 +51,9 @@
 
 <script>
 // @ is an alias to /src
-import { get_all_setq } from "../apis/read.js";//从apis中引入，通过这个请求拿到数据
+import { new_setq, new_q, new_option } from "../apis/read.js";//从apis中引入，通过这个请求拿到数据
+import { reactive, ref, onMounted } from "@vue/composition-api"
+
 
 export default {
   name: 'admin_q_edit',
@@ -60,15 +62,16 @@ export default {
     data() {
         return {
             data: [],
-            setq_des: '',
             setq_q_num: 0,
             q_list: [],
             age:'',
+            setq_des: '',
             setq_pf: 0.0,
             setq_b: 0.0,
         }
     },
     watch:{
+        //监听
         'setq_pf' : {
             handler(){
                 this.setq_b = this.setq_pf * 2;
@@ -85,29 +88,112 @@ export default {
         this.setq_b = this.setq_pf*2;
     },
     methods: {
+        
         mem(){
             for(var i = 0; i < 31; i++){
                 //使用set初始化，使数组数据成为响应式，可以实时监测
-                //好像还有使用watch的方法
+                //或者使用watch的方法
                 this.$set(this.q_list,i,{ num: 0, des: '',ans_list: []});
                 for(var j = 0; j < 31; j++){
                     this.q_list[i].ans_list[j] = ''
                 } 
             };
         },
+
         print_qlist(){
-            console.log(this.q_list);
-            console.log(this.setq_q_num)
+            console.log('问题选项列表 ',this.q_list);
+            console.log('问题数 ',this.setq_q_num);
         },
+
         publish(){
-            console.log(this.setq_des);
-            console.log(this.setq_q_num);
-            console.log(this.setq_pf);
-            console.log(this.setq_b)
+
+            //新建一个问题集合，添加信息如  （问题描述，参数pf，参数b）
+            //获得添加的问题id，便于后面添加问题
+            const param = reactive({
+                desc : this.setq_des,
+                pf : this.setq_pf,
+                b : this.setq_b
+            });
+
+            const resdata = reactive({});
+            const is_setq_add = reactive({});
+            const resdata1 = reactive({});
+            const is_q_add = reactive({});
+            const resdata2 = reactive({});
+            const is_op_add = reactive({});
+
+
+
+
+            new_setq(param).then(resp =>{
+                console.log('new setq 接口调用')
+                this.resdata = resp.data.data;
+                console.log(this.resdata);
+                this.is_setq_add = false;
+                if(this.resdata.length == 0){
+                    alert(resp.data.message)
+                }
+                else{
+                    this.is_setq_add = true;
+                    
+                    for(var i=1; i<=this.setq_q_num; i++){
+                        const param1 = reactive({
+                            setq_id : this.resdata,
+                            desc : this.q_list[i].des,
+                            num : this.q_list[i].num,
+                        });
+                        this.index = 1;
+                        new_q(param1).then(resp1 =>{
+                            console.log('new q 接口调用')
+                            this.resdata1 = resp1.data.data;
+                            console.log(this.resdata1);
+                            this.is_q_add = false;
+                            
+                            if(this.resdata1.length == 0){
+                                alert(resp1.data.message)
+                            }
+
+                            else{
+                                this.is_q_add = true;
+                                console.log('this.is_q_add = ',this.is_q_add)
+                                console.log('i = ',i,'q_list[i].num = ',this.q_list[this.index].num)
+                                for(var j=1; j<=this.q_list[this.index].num; j++){
+                                    
+                                    const param2 = reactive({
+                                        q_id : this.resdata1,
+                                        desc : this.q_list[this.index].ans_list[j],
+                                        num : j,
+                                    });
+                                    console.log('待插入选项',param2)
+
+                                    new_option(param2).then(resp2 =>{
+                                        console.log('new option 接口调用')
+                                        this.resdata2 = resp2.data.data;
+                                        console.log(this.resdata2);
+                                        this.is_op_add = false;
+                                        if(this.resdata2.length == 0){
+                                            alert(resp1.data.message)
+                                        }
+                                        else{
+                                            this.is_op_add = true;
+                                        }
+                                    }).catch(err =>{
+                                        console.log(err)
+                                    });
+                                }
+                            }
+                        }).catch(err =>{
+                            console.log(err)
+                        });
+                    }
+                }
+            }).catch(err =>{
+                console.log(err)
+            });
         },
-        
     }
 }
+
 </script>
 
 <style scoped lang="scss">

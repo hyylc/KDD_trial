@@ -1,6 +1,7 @@
 from pymysql import connect
 from flask import Flask,request,render_template,flash,session
 from pymysql.cursors import DictCursor # 得到字典形式的返回
+from option import Option
 
 class Q(object):
     def __init__(self): # 创建对象同时要执行的代码
@@ -20,23 +21,29 @@ class Q(object):
    
     # 插入一个问题
     def new_Q(self,param):
-        sql = "select COUNT(*) from q"
+        sql = "select MAX(q.idq) from q"
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
             #return True
         except:
             self.conn.rollback()                   # Rollback in case there is any error
-        id_count = self.cursor.fetchone()['COUNT(*)']
-        sql = "insert into q (idq,q_id_of_setq,q_description,q_num_of_ans) values (" + str(id_count+1) + "," + str(param['id_of_setq']) + ",'" + param['desc'] + "','" + param['num'] + ")"
+        # print('max(q.idq) = ',self.cursor.fetchone()['MAX(q.idq)'])
+        rs = self.cursor.fetchone()
+        if rs['MAX(q.idq)'] == None:
+            id_count = 0
+        else:       
+            id_count = rs['MAX(q.idq)']
+        sql = "insert into q (idq,q_id_of_setq,q_description,q_num_of_ans) values (" + str(id_count+1) + "," + str(param['id_of_setq']) + ",'" + param['desc'] + "'," + str(param['num']) + ")"
         print(sql)
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
-            return True
+            return str(id_count+1)
         except:
             self.conn.rollback()                   # Rollback in case there is any error
             return False
+
 
     # 查询一个问题
     def q_detail(self,param):
@@ -51,6 +58,16 @@ class Q(object):
         sql = 'select * from q where q_id_of_setq = ' + str(param['id_setq'])
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
+        # 接下来根据所有问题的idq查询每个问题的所有选项，一起返回
+        ans_list = []
+        for i in rs:
+            p = {
+                'id_q' : i['idq']
+            }
+            o = Option()
+            data = o.alloption(p)
+            print(data)
+            ans_list.append(data)
         return rs
 
     # 返回问题集合的所有问题id

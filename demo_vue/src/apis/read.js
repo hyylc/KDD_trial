@@ -42,10 +42,29 @@ export function new_setq(param){
             pf : param.pf,
             b : param.b
         }
-        //  param = {
-        //     'desc' : get_data['desc'],
-        //     'pf' : get_data['pf'],
-        //     'b' : get_data['b']
-        // }
+    });
+};
+
+export function new_q(param){
+    return service.request({
+        method : "post",
+        url : "/new_Q",//对应flask里的路由
+        data:{
+            desc : param.desc,
+            setq_id : param.setq_id,
+            num : param.num
+        }
+    });
+};
+
+export function new_option(param){
+    return service.request({
+        method : "post",
+        url : "/new_Option",//对应flask里的路由
+        data:{
+            desc : param.desc,
+            q_id : param.q_id,
+            num : param.num
+        }
     });
 };
