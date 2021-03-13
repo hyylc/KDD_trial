@@ -8,7 +8,7 @@
             <li><a class="active" href="/admin_home">问卷列表</a></li>
             <li><a href="/admin_q_edit">发布问卷</a></li>
         </ul>
-        <fish-table :columns="columns" :data="data" :pagination="page" ></fish-table>
+        <fish-table :columns="this.columns" :data="data" :pagination="page" ></fish-table>
     </div > 
   </div>
  
@@ -27,14 +27,16 @@ export default {
   data() {
     return {
         page: {total: 15, current: 1},
-        columns: [{title: 'Name', key: 'name'},
+        columns: [{title: 'NNAMS', key: 'name'},
           {title: 'age', key: 'age'},
           {title: 'Address', key: 'address'},
-          {title: 'Operate',
-            key: 'operate',
+          {title: 'Operate',key: 'operate',
             render: (h, record, column) => h('a', '编辑')}],
         data: [
-          
+                    {name: 'yanbin.hu', age: 32, address: 'haidi part 1, xihu, Hangzhou'},
+          {name: 'yanzu.wu', age: 35, address: 'haidi part 5, xihu, Hangzhou'},
+          {name: 'yanzu.wu', age: 35, address: 'haidi part 5, xihu, Hangzhou'},
+          {name: 'yanzu.wu', age: 35, address: 'haidi part 5, xihu, Hangzhou'}
         ]
     }
   },
@@ -47,7 +49,8 @@ export default {
             console.log("In register resp = ",resp);
             console.log("In register resp.data.message = ",resp.data.message);
             this.data = resp.data.data;
-            console.log('输出结果 = ',this.data)
+            console.log('this.data = ',this.data)
+            console.log('this.data[0] = ',this.data[0])
             // if(this.data.length == 0){
             //     alert('暂无问卷数据。')
             // }

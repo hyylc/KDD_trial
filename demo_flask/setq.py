@@ -48,6 +48,7 @@ class SetQ(object):
         # 查询问题集合表返回问题集合的描述和参数设置
         # （同时也要查询问题表）
         sql = "select * from setq where idsetQ = " + str(param['id_setq'])
+        print(sql)
         self.cursor.execute(sql)
         rs = self.cursor.fetchone()
         return rs

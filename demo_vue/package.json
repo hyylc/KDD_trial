@@ -18,6 +18,8 @@
     "less-loader": "^5.0.0",
     "lib-flexible": "^0.3.2",
     "postcss-plugin-px2rem": "^0.8.1",
+    "react": "^17.0.1",
+    "react-router-dom": "^5.2.0",
     "vue": "^2.6.10",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.3",

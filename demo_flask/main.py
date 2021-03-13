@@ -287,7 +287,7 @@ def setq_detail():
         sq = SetQ()
         q = Q()
         sqdata = sq.setq_detail(param)
-        qdata = q.allq(param)
+        qdata,ansdata = q.allq(param)
         if sqdata == None:
             resData = {
                 'resCode' : 1,
@@ -297,7 +297,7 @@ def setq_detail():
             return jsonify(resData)
         resData = {
             'resCode' : 0,
-            'data' : [sqdata,qdata],
+            'data' : [sqdata,qdata,ansdata],
             'message' : '查询成功'
         }
         return jsonify(resData)

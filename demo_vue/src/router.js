@@ -38,7 +38,7 @@ export default new Router({
       component: admin_home
     },
     {
-      path: '/user_q',
+      path: '/user_q/:id',
       name: 'user_q',
       component: user_q
     },

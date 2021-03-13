@@ -68,3 +68,14 @@ export function new_option(param){
         }
     });
 };
+
+
+export function setq_info(param){
+    return service.request({
+        method : "post",
+        url : "/setq_detail",//对应flask里的路由
+        data:{
+            setq_id : param.id
+        }
+    });
+};

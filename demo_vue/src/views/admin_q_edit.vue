@@ -122,14 +122,14 @@ export default {
             const resdata2 = reactive({});
             const is_op_add = reactive({});
 
+            var that = this;
 
-
-
+            this.is_setq_add = false;
             new_setq(param).then(resp =>{
                 console.log('new setq 接口调用')
                 this.resdata = resp.data.data;
-                console.log(this.resdata);
-                this.is_setq_add = false;
+                console.log('idsetq = ',this.resdata);
+                
                 if(this.resdata.length == 0){
                     alert(resp.data.message)
                 }
@@ -142,13 +142,18 @@ export default {
                             desc : this.q_list[i].des,
                             num : this.q_list[i].num,
                         });
-                        this.index = 1;
+                        const index = i;
+                        console.log('i = ',i)
+                        console.log(param1)
+                        this.is_q_add = false;
+                        
+                        setTimeout(function () {
+                            console.log('延迟500ms')
+                        },1000);
                         new_q(param1).then(resp1 =>{
                             console.log('new q 接口调用')
                             this.resdata1 = resp1.data.data;
-                            console.log(this.resdata1);
-                            this.is_q_add = false;
-                            
+                            console.log('idq = ',this.resdata1);
                             if(this.resdata1.length == 0){
                                 alert(resp1.data.message)
                             }
@@ -156,32 +161,39 @@ export default {
                             else{
                                 this.is_q_add = true;
                                 console.log('this.is_q_add = ',this.is_q_add)
-                                console.log('i = ',i,'q_list[i].num = ',this.q_list[this.index].num)
-                                for(var j=1; j<=this.q_list[this.index].num; j++){
+                                console.log('i = ',i,'q_list[i].num = ',this.q_list[index].num);
+                                for(var j=1; j<=this.q_list[index].num; j++){
                                     
                                     const param2 = reactive({
                                         q_id : this.resdata1,
-                                        desc : this.q_list[this.index].ans_list[j],
+                                        desc : this.q_list[index].ans_list[j],
                                         num : j,
                                     });
                                     console.log('待插入选项',param2)
-
+                                    this.is_op_add = false;
+                                    setTimeout(function () {
+                                        console.log('延迟500ms')
+                                    },500);
                                     new_option(param2).then(resp2 =>{
                                         console.log('new option 接口调用')
                                         this.resdata2 = resp2.data.data;
                                         console.log(this.resdata2);
-                                        this.is_op_add = false;
+                                        
                                         if(this.resdata2.length == 0){
                                             alert(resp1.data.message)
                                         }
                                         else{
                                             this.is_op_add = true;
                                         }
+                                        
+
                                     }).catch(err =>{
                                         console.log(err)
                                     });
                                 }
                             }
+                            
+
                         }).catch(err =>{
                             console.log(err)
                         });

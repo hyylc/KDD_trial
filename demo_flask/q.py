@@ -34,6 +34,7 @@ class Q(object):
             id_count = 0
         else:       
             id_count = rs['MAX(q.idq)']
+        print(id_count)
         sql = "insert into q (idq,q_id_of_setq,q_description,q_num_of_ans) values (" + str(id_count+1) + "," + str(param['id_of_setq']) + ",'" + param['desc'] + "'," + str(param['num']) + ")"
         print(sql)
         try:
@@ -68,11 +69,11 @@ class Q(object):
             data = o.alloption(p)
             print(data)
             ans_list.append(data)
-        return rs
+        return rs,ans_list
 
     # 返回问题集合的所有问题id
     def allq_id(self,param):
-        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq'])
+        sql = 'select idq from q where q_id_of_setq = ' + str(param['id_setq']) + ' order by idq ASC'
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
         return rs

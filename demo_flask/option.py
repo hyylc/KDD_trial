@@ -32,7 +32,8 @@ class Option(object):
         if rs['MAX(idoption)'] == None:
             id_count = 0
         else:       
-            id_count = rs['MAX(idoption)']       
+            id_count = rs['MAX(idoption)']   
+        print(id_count)    
         sql = "insert into op (idoption,q_id,option_description,option_num) values (" + str(id_count+1) + "," + str(param['q_id']) + ",'" + param['desc'] + "'," + str(param['num']) + ")"
         print(sql)
         try:
@@ -46,7 +47,8 @@ class Option(object):
 
     # 返回问题的所有选项
     def alloption(self,param):
-        sql = 'select * from op where q_id = ' + str(param['id_q']) + 'order by num ASC'
+        sql = 'select * from op where q_id = ' + str(param['id_q']) + ' order by option_num ASC'
+        print(sql)
         self.cursor.execute(sql)
         rs = self.cursor.fetchall()
         return rs

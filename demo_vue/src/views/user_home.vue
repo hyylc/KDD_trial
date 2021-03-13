@@ -2,8 +2,6 @@
   <div class="user_home">
     <div id="app">
       <div id="nav">
-     <!--<router-link to="/user_home">问卷列表</router-link> |
-        <router-link to="/about">个人信息</router-link><br><br> -->
         <ul>
             <li><a class="active" href="/user_home">问卷列表</a></li>
             <li><a href="/user_info">个人信息</a></li>
@@ -19,6 +17,8 @@
 <script>
 // @ is an alias to /src
 import { get_all_setq } from "../apis/read.js";//从apis中引入，通过这个请求拿到数据
+import React from 'react'
+import { Redirect } from 'react-router-dom'
 
 export default {
   name: 'user_home',
@@ -26,16 +26,22 @@ export default {
   },
   data() {
     return {
-        page: {total: 21, current: 1},
-        columns: [{title: 'Name', key: 'name'},
-          {title: 'age', key: 'age'},
-          {title: 'Address', key: 'address'},
-          {title: 'Operate',
-            key: 'operate',
-            render: (h, record, column) => h('a', '编辑')}],
-        data: [
-          
-        ]
+        page: {total: 0, current: 1},
+        columns: [
+          {title: '问卷编号', key: 'id'},
+          {title: '问卷描述', key: 'desc'},
+          {title: '操作', key: 'operate',
+            render: (h, record, column) => {
+              console.log(this.now_setq)
+              record.id = '/user_q/'+record.id
+              return <router-link to={record.id}>查看详情</router-link>
+            }
+          }
+        ],
+        data: [],
+        now_setq: 0,
+        now_user: 0,
+
     }
   },
   created() {
@@ -48,9 +54,14 @@ export default {
             console.log("In register resp.data.message = ",resp.data.message);
             this.data = resp.data.data;
             console.log('输出结果 = ',this.data)
-            // if(this.data.length == 0){
-            //     alert('暂无问卷数据。')
-            // }
+            for (var i=0; i < resp.data.data.length; i++){
+              this.data[i].id = resp.data.data[i].idsetQ;
+              this.data[i].desc = resp.data.data[i].setQ_description;
+            }
+            this.page.total = resp.data.data.length;
+            if(this.data.length == 0){
+                alert('暂无问卷数据。')
+            }
         });
         
     }
