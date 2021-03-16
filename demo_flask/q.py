@@ -2,6 +2,7 @@ from pymysql import connect
 from flask import Flask,request,render_template,flash,session
 from pymysql.cursors import DictCursor # 得到字典形式的返回
 from option import Option
+import time
 
 class Q(object):
     def __init__(self): # 创建对象同时要执行的代码
@@ -21,7 +22,7 @@ class Q(object):
    
     # 插入一个问题
     def new_Q(self,param):
-        sql = "select MAX(q.idq) from q"
+        sql = "select MAX(idq) from q"
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
@@ -30,19 +31,22 @@ class Q(object):
             self.conn.rollback()                   # Rollback in case there is any error
         # print('max(q.idq) = ',self.cursor.fetchone()['MAX(q.idq)'])
         rs = self.cursor.fetchone()
-        if rs['MAX(q.idq)'] == None:
+        if rs['MAX(idq)'] == None:
             id_count = 0
         else:       
-            id_count = rs['MAX(q.idq)']
+            id_count = rs['MAX(idq)']
         print(id_count)
         sql = "insert into q (idq,q_id_of_setq,q_description,q_num_of_ans) values (" + str(id_count+1) + "," + str(param['id_of_setq']) + ",'" + param['desc'] + "'," + str(param['num']) + ")"
         print(sql)
         try:
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
+            rs = self.cursor.fetchone()
+            # time.sleep(1)
             return str(id_count+1)
-        except:
+        except Exception as e:
             self.conn.rollback()                   # Rollback in case there is any error
+            print(e)
             return False
 
 

@@ -40,9 +40,11 @@ class Option(object):
             self.cursor.execute(sql)             # 执行单条sql语句
             self.conn.commit()                     # 提交到数据库执行
             return True
-        except:
+        except Exception as e:
             self.conn.rollback()                   # Rollback in case there is any error
+            print(e)
             return False
+
 
 
     # 返回问题的所有选项
