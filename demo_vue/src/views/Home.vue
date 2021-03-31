@@ -49,10 +49,10 @@ export default {
         console.log("In register resp = ",resp);
 				console.log("In register resp.data.message = ",resp.data.message);
         if (resp.data.resCode == 0){
-          alert('登录成功！');
-          //UserID保持到窗口关闭
           window.sessionStorage.setItem('UserID',resp.data.data.iduser);
           console.log('当前用户id ',window.sessionStorage.UserID);
+          alert('登录成功！');
+          //UserID保持到窗口关闭
           //跳转用户首页
           this.$router.push({
 						path:'/user_home'

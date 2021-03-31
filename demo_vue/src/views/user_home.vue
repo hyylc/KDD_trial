@@ -49,6 +49,7 @@ export default {
   },
   methods: {
     get_setq(){
+        console.log('当前用户id  = ',window.sessionStorage.UserID)
         get_all_setq().then(resp => {
             console.log("In register resp = ",resp);
             console.log("In register resp.data.message = ",resp.data.message);

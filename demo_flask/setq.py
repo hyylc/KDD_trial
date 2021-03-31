@@ -53,6 +53,16 @@ class SetQ(object):
         rs = self.cursor.fetchone()
         return rs
 
+    # 查询问题集合的pf
+    def setq_pf(self,param):
+        # 查询问题集合表返回问题集合的描述和参数设置
+        # （同时也要查询问题表）
+        sql = "select setQ_pf from setq where idsetQ = " + str(param['id_setq'])
+        print(sql)
+        self.cursor.execute(sql)
+        rs = self.cursor.fetchone()
+        return rs
+
     # 查询所有问题集合
     def all_setq(self):
         # 查询问题集合表返回问题集合的描述和参数设置

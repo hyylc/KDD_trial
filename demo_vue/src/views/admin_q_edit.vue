@@ -45,6 +45,7 @@
   </div>
     <button @click="print_qlist" type="submit">打印</button>
     <button @click="publish" type="submit">发布该问卷</button>
+    <!-- 发布成功后记得刷新页面 -->
     <!-- <button @click="publish1" type="submit">发布问题</button>
     <button @click="publish2" type="submit">发布回答</button> -->
   </div>
@@ -115,26 +116,7 @@ export default {
         },
 
 
-        //把这三个函数拆开用一个参数，记录问题集合id，问题id，便于后续插入
-        // publish(){
-        //     this.publish0().then(val =>{
-        //         this.publish1().then(val =>{
-        //             this.publish2();
-        //         })
-        //     })
-        // },
-        // publish(){
-        //     // await this.publish0()
-        //     // console.log('插入问题集合后this.resData = ',this.resdata)
-        //     this.publish0()
-        //     setTimeout(this.publish1(), 2000)
-        //     console.log('插入问题集合后this.resData = ',this.resdata)
-        //     setTimeout(this.publish2(), 2000)
-        //     // this.publish2()
-        // },
-
-
-        publish(){
+        async publish(){
             //新建一个问题集合，添加信息如  （问题描述，参数pf，参数b）
             //获得添加的问题id，便于后面添加问题
             this.param = reactive({
@@ -143,7 +125,7 @@ export default {
                 b : this.setq_b
             });
             this.is_setq_add = false;
-            new_setq(this.param).then(resp =>{
+            await new_setq(this.param).then(resp =>{
                 console.log('new setq 接口调用')
                 this.resdata = resp.data.data;
                 console.log('idsetq = ',this.resdata);
@@ -153,9 +135,9 @@ export default {
                 }
                 else{
                     this.is_setq_add = true;
-                    this.publish1();
                 }
             });
+            this.publish1()
             
         },
         
@@ -170,7 +152,6 @@ export default {
                     desc : this.q_list[i].des,
                     num : this.q_list[i].num
                 }
-                setTimeout(1000)
                 console.log('待插入选项',this.param)
                 await new_q(this.param).then(resp1 =>{
                     console.log('new q 接口调用')
@@ -179,21 +160,20 @@ export default {
                     if(this.resdata1.length == 0){
                         alert(resp1.data.message)
                     }
-                    else{
-                        this.publish2(i)
-                    }
                 });
+                await this.publish2(i)
             }
         },
 
-       async publish2(i){
-            for(var j=1; j<=this.q_list[i].num; j++){
+        async publish2(i){
+            for(let j=1; j<=this.q_list[i].num; j++){
                                     
                 this.param = {
                     q_id : this.resdata1[i],
                     desc : this.q_list[i].ans_list[j],
                     num : j,
                 };
+                
                 console.log('待插入选项',this.param);
                 await new_option(this.param).then(resp2 =>{
                     console.log('new option 接口调用')
@@ -206,69 +186,6 @@ export default {
                 });
             }
         },
-
-            //         for(var i=1; i<=this.setq_q_num; i++){
-            //             const param1 = reactive({
-            //                 setq_id : this.resdata,
-            //                 desc : this.q_list[i].des,
-            //                 num : this.q_list[i].num,
-            //             });
-            //             const index = i;
-            //             console.log('i = ',i)
-            //             console.log(param1)
-            //             this.is_q_add = false;
-                        
-                       
-            //             new_q(param1).then(resp1 =>{
-            //                 console.log('new q 接口调用')
-            //                 this.resdata1 = resp1.data.data;
-            //                 console.log('idq = ',this.resdata1);
-            //                 if(this.resdata1.length == 0){
-            //                     alert(resp1.data.message)
-            //                 }
-
-            //                 else{
-            //                     this.is_q_add = true;
-            //                     console.log('this.is_q_add = ',this.is_q_add)
-            //                     console.log('i = ',i,'q_list[i].num = ',this.q_list[index].num);
-            //                     for(var j=1; j<=this.q_list[index].num; j++){
-                                    
-            //                         const param2 = reactive({
-            //                             q_id : this.resdata1,
-            //                             desc : this.q_list[index].ans_list[j],
-            //                             num : j,
-            //                         });
-            //                         console.log('待插入选项',param2)
-            //                         this.is_op_add = false;
-                                 
-            //                         new_option(param2).then(resp2 =>{
-            //                             console.log('new option 接口调用')
-            //                             this.resdata2 = resp2.data.data;
-            //                             console.log(this.resdata2);
-                                        
-            //                             if(this.resdata2.length == 0){
-            //                                 alert(resp1.data.message)
-            //                             }
-            //                             else{
-            //                                 this.is_op_add = true;
-            //                             }
-                                        
-
-            //                         }).catch(err =>{
-            //                             console.log(err)
-            //                         });
-            //                     }
-            //                 }
-                            
-
-            //             }).catch(err =>{
-            //                 console.log(err)
-            //             });
-            //         }
-            //     }
-            // }).catch(err =>{
-            //     console.log(err)
-            // });
     },
 }
 

@@ -543,15 +543,24 @@ def perturb_one():
         get_data = json.loads(request.get_data(as_text = True))
         param = {
             'id_setq' : get_data['setq_id'],
-            'pf' : get_data['pf'],
+            # 'pf' : float(get_data['pf']),
             # 提交一份对所有问题的回答（qid 和 ans），并将所有回答按参数扰动
             'ans' : get_data['ans_list']
         }
+        re = []
         # param['ans'] = [[],[],[],[]]
         # 根据qid找到问题的回答数量s，按概率扰动
+        sq = SetQ()
+        param1 = {
+            'id_setq' : get_data['setq_id']
+        }
+        pf = sq.setq_pf(param1)['setQ_pf']
+        print('保持不变概率 ', 1-float(pf))
+        # try:
         for i in param['ans']:
             # i[0]  qid
             # i[1]  ans
+            print('原回答 ',i[1])
             q = Q()
             param = {
                 'id' : i[0]
@@ -561,18 +570,19 @@ def perturb_one():
             s = data['q_num_of_ans']
             pro = np.random.uniform(0,1)
             print(pro)
-            if pro <= param['pf']:
+            if pro <= 1-float(pf) or s==1 :
                 i[1] = i[1]
             else:
                 option = []
-                for num in s:
-                    if num != i[1]:
-                        option.append(num)
-                i[1] = random.sample(option,s-1)
-            print(i[1])
+                for num in range(s):
+                    if num+1 != i[1]:
+                        option.append(num+1)
+                i[1] = random.sample(option,s-1)[0]
+            print('扰动结果',i[1])
+            re.append(i)
         resData = {
             "resCode" : 0,
-            "data" : param['ans'],
+            "data" : re,
             "message" : '返回扰动结果'
         }
         return jsonify(resData)
@@ -585,16 +595,25 @@ def perturb_two():
         get_data = json.loads(request.get_data(as_text = True))
         param = {
             'id_setq' : get_data['setq_id'],
-            'b' : get_data['b'],
+            # 'b' : get_data['b'],
             # 提交一份对所有问题的回答（qid 和 ans），并将所有回答按参数扰动
             'ans' : get_data['ans_list']
         }
+        re = []
         # param['ans'] = [[],[],[],[]]
         # 根据qid找到问题的回答数量s，按概率扰动
-        pro = np.random.uniform(0,param['b'])
+        sq = SetQ()
+        param1 = {
+            'id_setq' : get_data['setq_id']
+        }
+        b = 2*float(sq.setq_pf(param1)['setQ_pf'])
+        print('b = ',b)
+        pro = np.random.uniform(0,b)
+        print('保持不变概率 ', 1-pro)
         for i in param['ans']:
             # i[0]  qid
             # i[1]  ans
+            print('原回答 ',i[1])
             q = Q()
             param = {
                 'id' : i[0]
@@ -602,20 +621,21 @@ def perturb_two():
             data = q.q_detail(param)
             print('问题答案数量 ',data['q_num_of_ans'])
             s = data['q_num_of_ans']
-            pro1 = np.random.uniform(0,pro)
+            pro1 = np.random.uniform(0,1)
             print(pro1)
-            if pro1 <= pro:
+            if pro1 <= 1-pro:
                 i[1] = i[1]
             else:
                 option = []
-                for num in s:
-                    if num != i[1]:
-                        option.append(num)
-                i[1] = random.sample(option,s-1)
-            print(i[1])
+                for num in range(s):
+                    if num+1 != i[1]:
+                        option.append(num+1)
+                i[1] = random.sample(option,s-1)[0]
+            print('扰动结果',i[1])
+            re.append(i)
         resData = {
             "resCode" : 0,
-            "data" : [pro, param['ans']],
+            "data" : [pro, re],
             "message" : '返回扰动结果'
         }
         return jsonify(resData)

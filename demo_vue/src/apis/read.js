@@ -79,3 +79,27 @@ export function setq_info(param){
         }
     });
 };
+
+export function Perturb_One(param){
+    return service.request({
+        method : "post",
+        url : "/perturb_one",//对应flask里的路由
+        data:{
+            setq_id : param.id,
+            // pf : param.pf,
+            ans_list : param.ans
+        }
+    });
+};
+
+export function Perturb_Two(param){
+    return service.request({
+        method : "post",
+        url : "/perturb_two",//对应flask里的路由
+        data:{
+            setq_id : param.id,
+            // pf : param.pf,
+            ans_list : param.ans
+        }
+    });
+};
