@@ -3,6 +3,7 @@ from datetime import datetime
 from collections import Counter
 import numpy as np
 import random
+import time
 import math
 import re
 
@@ -465,29 +466,144 @@ def new_Option():
 
 #************回答接口************
 # 新建回答
-@app.route('/new_Q',methods=['POST','GET'])
+@app.route('/new_Ans',methods=['POST','GET'])
 def new_Ans():
     if request.method == 'POST':
         get_data = json.loads(request.get_data(as_text = True))
         param = {
             'user_id' : get_data['user_id'],
-            'q_id' : get_data['q_id'], 
+            # 下面三个都用列表存储
+            'qlist' : get_data['qlist'], 
             'ans1' : get_data['ans1'],
             'ans2' : get_data['ans2']
         }
+        # for循环处理插入回答的问题，避免频繁调用接口
         a = Ans()
-        data = a.new_ans(param)
-        if data == True:
+        # user_id']) + "," + str(param['q_id']) + "," + str(param['ans1']) + "," + str(param['ans2']) + ")"
+        try:
+            for i in range(len(param['qlist'])):
+                p = {
+                    'user_id' : param['user_id'],
+                    # 下面三个都用列表存储
+                    'q_id' : param['qlist'][i],
+                    'ans1' : param['ans1'][i],
+                    'ans2' : param['ans2'][i]
+                }
+                data = a.new_ans(p)
+            if data == True:
+                resData = {
+                    "resCode" : 0,            
+                    "data" : data,
+                    "message" : '回答已提交'
+                }
+                return jsonify(resData)
+            else:
+                resData = {
+                    "resCode" : 1,            
+                    "data" : [],
+                    "message" : '提交失败'
+                }
+                return jsonify(resData)
+        except:
+            resData = {
+                "resCode" : 1,            
+                "data" : [],
+                "message" : '提交失败'
+            }
+            return jsonify(resData)
+    else:
+        resData = {
+            "resCode" : 1,            
+            "data" : [],
+            "message" : '请求方式错误'
+        }
+        return jsonify(resData)
+
+
+@app.route('/update_Ans',methods=['POST','GET'])
+def update_Ans():
+    if request.method == 'POST':
+        get_data = json.loads(request.get_data(as_text = True))
+        param = {
+            'user_id' : get_data['user_id'],
+            # 下面三个都用列表存储
+            'qlist' : get_data['qlist'], 
+            'ans1' : get_data['ans1'],
+            'ans2' : get_data['ans2']
+        }
+        # for循环处理插入回答的问题，避免频繁调用接口
+        a = Ans()
+        # user_id']) + "," + str(param['q_id']) + "," + str(param['ans1']) + "," + str(param['ans2']) + ")"
+        try:
+            for i in range(len(param['qlist'])):
+                p = {
+                    'user_id' : param['user_id'],
+                    'q_id' : param['qlist'][i],
+                }
+                data = a.dele_ans(p)
+            for i in range(len(param['qlist'])):
+                p = {
+                    'user_id' : param['user_id'],
+                    'q_id' : param['qlist'][i],
+                    'ans1' : param['ans1'][i],
+                    'ans2' : param['ans2'][i]
+                }
+                # time.sleep(100)
+                data = a.new_ans(p)
+            if data == True:
+                resData = {
+                    "resCode" : 0,            
+                    "data" : data,
+                    "message" : '回答已提交'
+                }
+                return jsonify(resData)
+            else:
+                resData = {
+                    "resCode" : 1,            
+                    "data" : [],
+                    "message" : '提交失败'
+                }
+                return jsonify(resData)
+        except:
+            resData = {
+                "resCode" : 1,            
+                "data" : [],
+                "message" : '提交失败'
+            }
+            return jsonify(resData)
+    else:
+        resData = {
+            "resCode" : 1,            
+            "data" : [],
+            "message" : '请求方式错误'
+        }
+        return jsonify(resData)
+
+# 查看是否已提交过该问题集
+@app.route('/is_existed',methods=['POST','GET'])
+def is_existed():
+    if request.method == 'POST':
+        get_data = json.loads(request.get_data(as_text = True))
+        param = {
+            'id_user' : get_data['user_id'],
+            # 这是一个问题id的列表
+            'qlist' : get_data['qlist'], 
+        }
+        a = Ans()
+        # 要查询所有问题的回答，返回给用户呢
+        data = a.ans_user_qlist(param)
+        print(data)
+        if data != None:
             resData = {
                 "resCode" : 0,            
                 "data" : data,
-                "message" : '回答已提交'
+                "message" : '原回答'
             }
             return jsonify(resData)
         resData = {
             "resCode" : 1,            
             "data" : [],
-            "message" : '提交失败'
+            "message" : '没有回答记录'
         }
         return jsonify(resData)
     else:
@@ -740,9 +856,6 @@ def project():
             w.new_weight(param)
 
 #************用户接口************
-
-
-
 
 #***********测试功能*********
 

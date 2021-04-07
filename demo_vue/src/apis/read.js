@@ -103,3 +103,43 @@ export function Perturb_Two(param){
         }
     });
 };
+
+export function is_existed(param){
+    return service.request({
+        method : "post",
+        url : "/is_existed",//对应flask里的路
+        data :{
+            user_id : param.u_id,
+            qlist : param.qlist
+        }
+    });
+};
+
+
+export function first_submit(param){
+    return service.request({
+        method : "post",
+        url : "/new_Ans",//对应flask里的路
+        data :{
+            user_id : param.id_user,
+            //下面三个都是列表
+            qlist : param.qlist,
+            ans1 : param.ans1,
+            ans2 : param.ans2
+        }
+    });
+};
+
+export function update_submit(param){
+    return service.request({
+        method : "post",
+        url : "/update_Ans",//对应flask里的路由
+        data :{
+            user_id : param.id_user,
+            //下面三个都是列表
+            qlist : param.qlist,
+            ans1 : param.ans1,
+            ans2 : param.ans2
+        }
+    });
+};

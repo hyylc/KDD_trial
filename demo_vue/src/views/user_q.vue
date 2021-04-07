@@ -2,7 +2,8 @@
 <div class="user_q">
 
   <div >
-    <h3>This is a user_q page</h3>
+    <h3>This is a user {{UserID}} page</h3>
+    
     <br><br><br>
     <div class="main">
 
@@ -12,7 +13,7 @@
             <fish-field>
               <!-- <label>问题描述{{item+' ：  '+qdata[item-1].q_description+ans[item]}}</label> -->
               <label>问题描述{{item+' ：  '+qdata[item-1].q_description}}</label>
-              <fish-select v-model="ans[item]">
+              <fish-select v-model="ans[item-1]">
                 <div v-for="count of ansdata[item-1].length" :key="count" :label='item.q_description' :rules="[{ required: true, message: 'not empty'}]" span="24">
                   <fish-option  :index=count  :content=ansdata[item-1][count-1].option_description></fish-option>
                 </div>
@@ -29,25 +30,29 @@
         <label>一层机制扰动概率：{{sqdata.setQ_pf}}</label><br>
         <label>两层机制扰动概率：{{p2[0]}}</label><br>
         <br><br>
-        <label>上次提交：一层机制：{{sqdata.setQ_pf}}</label><br>
-        这里打印结果（如果没提交过，就显示没有好了）
-        <br><br>
-        <label>上次提交：两层机制：{{sqdata.setQ_pf}}</label><br>
-        这里打印结果
+        <label>上次提交</label><br>
+        <label>一层机制：{{last_ans1}}</label><br>
+        <label>两层机制：{{last_ans2}}</label><br>
         <br><br><br><br>
 
 
+        <button>您的答案</button>
+        <div v-for="item of qdata.length" :key="item" >
+          {{ans[item-1]}}
+        </div>
+        <br><br>
+
         <button @click="perturb_one" type="submit">一层机制</button>
-        这里打印扰动的结果
         <div v-for="item of p1" :key="item[0]" >
           {{item[1]}}
         </div>
         <br><br>
+
         <button @click="perturb_two" type="submit">两层机制</button>
-        这里打印扰动的结果
         <div v-for="item of p2[1]" :key="item[0]" >
           {{item[1]}}
         </div>
+
       </div>
 
       <br><br><br>
@@ -63,7 +68,7 @@
 <script>
 // @ is an alias to /src
 import { reactive, ref, OnMounted } from "@vue/composition-api"
-import { setq_info , Perturb_One , Perturb_Two } from "../apis/read.js"
+import { setq_info , Perturb_One , Perturb_Two , is_existed , first_submit , update_submit } from "../apis/read.js"
 
 export default {
   name: 'user_q',
@@ -71,6 +76,7 @@ export default {
   },
   data() {
     return {
+      UserID:'',
       data:[],
       now_setq: 0,
       singleSelectedValue:'',
@@ -79,7 +85,10 @@ export default {
       ansdata: [],
       ans: [],
       p1 : [],
-      p2 : []
+      p2 : [],
+      flag : '',
+      last_ans1 : [],
+      last_ans2 : []
     }
   },
   created() {
@@ -90,34 +99,97 @@ export default {
   methods: {
     mem(){
       console.log('当前用户id  = ',window.sessionStorage.UserID)
+      this.UserID = window.sessionStorage.UserID 
       for(var i = 0; i < 32 ; i++){
           this.$set(this.ans,i,0);
       }
-    },
-    get_setq(){
-      //得到某个问题集合的所有信息
-      const param = reactive({
-          id : this.now_setq
-      });
-
-      console.log(param.id)
-      setq_info(param).then(resp =>{
-          this.data = resp.data.data;
-          console.log('this.data = ',this.data)
-          //data包含sqdata qdata ansdata
-          this.sqdata = this.data[0]
-          this.qdata = this.data[1];
-          this.ansdata = this.data[2];
-      });
       
     },
-    sub(){
-        for(var i = 1; i <= this.qdata.length; i++){
-          console.log('问题',i,'结果',this.ans[i]);
+    async get_setq(){
+        //得到某个问题集合的所有信息
+        const param = reactive({
+            id : this.now_setq
+        });
+
+        console.log(param.id)
+        await setq_info(param).then(resp =>{
+            this.data = resp.data.data;
+            console.log('this.data = ',this.data)
+            //data包含sqdata qdata ansdata
+            this.sqdata = this.data[0]
+            this.qdata = this.data[1];
+            this.ansdata = this.data[2];
+        });
+
+        const param1 = reactive({
+            u_id : this.UserID,
+            qlist : []
+        });
+        for(var i = 0; i < this.qdata.length; i++){
+            // console.log(this.qdata[i].idq)
+            param1.qlist[i] = this.qdata[i].idq
         }
+        console.log('qlist = ',param1.qlist)
+        is_existed(param1).then(resp =>{
+            console.log('查询结果',resp.data.data)
+            //这里加一个flag判断
+            console.log('长度',resp.data.data.length)
+            if( resp.data.data.length != 0){
+              this.flag = false
+              for(var i = 0; i < resp.data.data.length; i ++){
+                // console.log(resp.data.data[i])
+                this.last_ans1[i] = resp.data.data[i].ans_one
+                this.last_ans2[i] = resp.data.data[i].ans_two
+              }
+            }
+            else{
+              this.flag = true
+            }
+        });
+    },
+    sub(){
+        for(var i = 0; i < this.qdata.length; i++){
+          console.log('问题',i+1,'原始答案',this.ans[i]);
+        }
+        const param = {
+          id_user : this.UserID,
+          qlist : [],
+          ans1 : [],
+          ans2 : [],
+        }
+        for(var i = 0; i < this.qdata.length; i++){
+            param.qlist[i] = this.qdata[i].idq
+            param.ans1[i] = this.p1[i][1]
+            param.ans2[i] = this.p2[1][i][1]
+        }
+        //判断要不要更新用户的回答
+        console.log('this.flag = ',this.flag)
 
-        //可能要更新用户的回答
-
+        if (this.flag == true){
+          first_submit(param).then(resp =>{
+              console.log(resp.data.data)
+              //这里加上判断是否添加成功，刷新页面
+              // if(resp.data.resCode == 0){
+              //   alert('提交成功！')
+              //   this.$router.push({
+              //     path:'/user_q/'+ this.sqdata.idsetQ
+              //   });
+              // }
+              // else{
+              //   alert('提交失败，请重新尝试！')
+              //   this.$router.push({
+              //     path:'/user_q/'+ this.sqdata.idsetQ
+              //   });
+              // }
+          })
+        }
+        else{
+          update_submit(param).then(resp =>{
+              console.log(resp.data.data)
+              //这里加上判断是否添加成功，刷新页面
+              // console.log(resp.data.resCode)
+          })
+        }
 
 
 
@@ -126,11 +198,11 @@ export default {
         const ans_list = [];
         const id_setq = this.sqdata.idsetQ;
         // const pf = this.sqdata.setQ_pf;
-        for(var i = 1; i <= this.qdata.length; i++){
+        for(var i = 0; i < this.qdata.length; i++){
           const tmp = [];
-          tmp[0] = this.qdata[i-1].idq
+          tmp[0] = this.qdata[i].idq
           tmp[1] = this.ans[i]
-          ans_list[i-1] = tmp;
+          ans_list[i] = tmp;
         }
         console.log(id_setq,ans_list)
         const param = {
@@ -148,11 +220,11 @@ export default {
         const ans_list = [];
         const id_setq = this.sqdata.idsetQ;
         // const pf = this.sqdata.setQ_pf;
-        for(var i = 1; i <= this.qdata.length; i++){
+        for(var i = 0; i < this.qdata.length; i++){
           const tmp = [];
-          tmp[0] = this.qdata[i-1].idq
+          tmp[0] = this.qdata[i].idq
           tmp[1] = this.ans[i]
-          ans_list[i-1] = tmp;
+          ans_list[i] = tmp;
         }
         console.log(id_setq,ans_list)
         const param = {
