@@ -231,7 +231,7 @@ def admin_sign_in():
             return jsonify(resData)
         resData = {
             "resCode" : 0,            
-            "data" : [],
+            "data" : data,
             "message" : '登录成功'
         }
         return jsonify(resData)

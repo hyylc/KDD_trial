@@ -26,6 +26,7 @@ axios.defaults.baseURL = "http://192.168.8.14:8081"
 
 
 
+
 new Vue({
   router,
   store,

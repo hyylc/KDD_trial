@@ -61,6 +61,7 @@ import { reactive, ref, OnMounted } from "@vue/composition-api"
 import { setq_info , Perturb_One , Perturb_Two , is_existed , first_submit , update_submit } from "../apis/read.js"
 
 export default {
+  inject: ['reloda'],
   name: 'user_q',
   components: {
   },
@@ -159,18 +160,12 @@ export default {
           first_submit(param).then(resp =>{
               console.log(resp.data.data)
               //这里加上判断是否添加成功，刷新页面
-              // if(resp.data.resCode == 0){
-              //   alert('提交成功！')
-              //   this.$router.push({
-              //     path:'/user_q/'+ this.sqdata.idsetQ
-              //   });
-              // }
-              // else{
-              //   alert('提交失败，请重新尝试！')
-              //   this.$router.push({
-              //     path:'/user_q/'+ this.sqdata.idsetQ
-              //   });
-              // }
+              if(resp.data.resCode == 0){
+                alert('提交成功！')
+                this.$router.push({
+                  path:'/user_q/'+ this.sqdata.idsetQ
+                });
+              }
           })
         }
         else{
@@ -178,6 +173,12 @@ export default {
               console.log(resp.data.data)
               //这里加上判断是否添加成功，刷新页面
               // console.log(resp.data.resCode)
+              if(resp.data.resCode == 0){
+                alert('提交成功！')
+                this.$router.push({
+                  path:'/user_home'
+                });
+              }
           })
         }
 
