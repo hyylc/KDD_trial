@@ -1,29 +1,24 @@
 <template>
   <div class="home">
-    <div>
-      <br><br><br><br><br><br>
-    </div>
     <div id="app">
-      <div id="nav">
-        <router-link to="/">登录</router-link> |
-        <router-link to="/about">注册</router-link><br><br>
-						<!-- autocomplete=false -->
-        <input  v-model="user.username" type="text"  placeholder="用户名" ><br><br>
-        <input  v-model="user.password" type="password"  placeholder="密码" ><br><br><br>
-        <button @click="register" type="submit" class="button orange">登录</button>
-      </div>
-      <router-view/>
-    </div >
-    <!-- <img alt="Vue logo" src="../assets/logo.png"><br> -->
-   <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    
-  </div >
+    <div id="nav">
+      <br><br><br><br><br><br>
+      <router-link to="/home">登录</router-link> |
+      <router-link to="/about">注册</router-link><br><br>
+      <input  v-model="user.username" type="text"  placeholder="用户名" ><br><br>
+      <input  v-model="user.password" type="password"  placeholder="密码" ><br><br><br>
+      <button @click="register" type="submit" class="button orange">用户登录</button>
+      <button @click="register_admin" type="submit" class="button orange">管理员登录</button>
+    </div>
+    <router-view/>
+  </div>
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
-import { sign_in } from "../apis/read.js";//从apis中引入，通过这个请求拿到数据
+import { sign_in , sign_in_admin } from "../apis/read.js";//从apis中引入，通过这个请求拿到数据
 
 export default {
   name: 'home',
@@ -62,7 +57,28 @@ export default {
           alert('登录失败。');
         }
       });
-    }
+    },
+
+    register_admin(){
+      console.log("输入的用户名和密码",this.user)
+      sign_in_admin(this.user).then(resp => {
+        console.log("In register resp = ",resp);
+				console.log("In register resp.data.message = ",resp.data.message);
+        if (resp.data.resCode == 0){
+          window.sessionStorage.setItem('AdminID',resp.data.data.idadmin);
+          console.log('当前用户id ',window.sessionStorage.AdminID);
+          alert('登录成功！');
+          //UserID保持到窗口关闭
+          //跳转用户首页
+          this.$router.push({
+						path:'/admin_home'
+					});
+        }
+        else{
+          alert('登录失败。');
+        }
+      });
+    },
   }
 }
 </script>

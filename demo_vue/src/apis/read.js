@@ -24,6 +24,17 @@ export function sign_in(param){
     });
 };
 
+export function sign_in_admin(param){
+    return service.request({
+        method : "post",
+        url : "/admin_sign_in",//对应flask里的路由
+        data:{
+            uname : param.username,
+            upwd : param.password
+        }
+    });
+};
+
 export function get_all_setq(){
     return service.request({
         method : "post",

@@ -3,7 +3,7 @@
     <div id="app">
     <div id="nav">
       <br><br><br><br><br><br>
-      <router-link to="/">登录</router-link> |
+      <router-link to="/home">登录</router-link> |
       <router-link to="/about">注册</router-link><br><br>
       <input  v-model="user.username" type="text"  placeholder="用户名" ><br><br>
       <input  v-model="user.password" type="password"  placeholder="密码" ><br><br><br>
@@ -44,7 +44,7 @@ export default {
           ///注册成功,转换到登录
           alert('注册成功！');
           this.$router.push({
-						path:'/',
+						path:'/home',
 					});
         }
         else{

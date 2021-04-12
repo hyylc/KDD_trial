@@ -17,6 +17,11 @@ export default new Router({
   mode: 'history',//去掉#
   routes: [
     {
+      path: '/home',
+      name: 'home',
+      component: home
+    },
+    {
       path: '/about',
       name: 'about',
       // component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
@@ -48,14 +53,10 @@ export default new Router({
       component: admin_q_edit
     },
     {
-      path: '/admin_q',
+      path: '/admin_q/:id',
       name: 'admin_q',
       component: admin_q
     },
-    {
-      path: '/',
-      name: 'home',
-      component: home
-    } 
+
   ]
 })

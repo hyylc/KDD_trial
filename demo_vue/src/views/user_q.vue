@@ -1,31 +1,24 @@
 <template >
-<div class="user_q">
-
-  <div >
-    <h3>This is a user {{UserID}} page</h3>
-    
-    <br><br><br>
-    <div class="main">
-
-      <div v-for="item of qdata.length" :key="item" >
-
-          <div class="divTestStyle">
-            <fish-field>
-              <!-- <label>问题描述{{item+' ：  '+qdata[item-1].q_description+ans[item]}}</label> -->
+<body class="user_q">
+    <h1 class="header">This is a user {{UserID}} page</h1>
+    <div class="container">
+      <div class="left">
+ 
+          <div class="divTestStyle" v-for="item of qdata.length" :key="item" >
+            <fish-field >
+              <br>
               <label>问题描述{{item+' ：  '+qdata[item-1].q_description}}</label>
-              <fish-select v-model="ans[item-1]">
+              <fish-select v-model="ans[item-1]" class="divTestStyle1">
                 <div v-for="count of ansdata[item-1].length" :key="count" :label='item.q_description' :rules="[{ required: true, message: 'not empty'}]" span="24">
                   <fish-option  :index=count  :content=ansdata[item-1][count-1].option_description></fish-option>
                 </div>
-              </fish-select>  
-            </fish-field> 
-          </div>
-          <br><br><br>
+              </fish-select> 
+            </fish-field>
+          
+        </div>
       </div>
-
-      <br><br><br><br><br><br>
-
-      <div>
+  
+      <div class="main">
         <br><br><br>
         <label>一层机制扰动概率：{{sqdata.setQ_pf}}</label><br>
         <label>两层机制扰动概率：{{p2[0]}}</label><br>
@@ -37,31 +30,28 @@
 
 
         <button>您的答案</button>
-        <div v-for="item of qdata.length" :key="item" >
+        <label v-for="item of qdata.length" :key="item" >
           {{ans[item-1]}}
-        </div>
-        <br><br>
+        </label>
+        <br>
 
         <button @click="perturb_one" type="submit">一层机制</button>
-        <div v-for="item of p1" :key="item[0]" >
+        <label v-for="item of p1" :key="item[0]" >
           {{item[1]}}
-        </div>
+        </label>
         <br><br>
 
         <button @click="perturb_two" type="submit">两层机制</button>
-        <div v-for="item of p2[1]" :key="item[0]" >
+        <label v-for="item of p2[1]" :key="item[0]" >
           {{item[1]}}
-        </div>
-
-      </div>
-
-      <br><br><br>
-      <div>
-        <button @click="sub" type="submit">提交扰动后的回答</button>
+        </label>
+        <br><br><br>
+        <label>
+          <button @click="sub" type="submit">提交扰动后的回答</button>
+        </label>
       </div>
     </div>
-  </div>
-</div>
+</body>
 </template>
 
 
@@ -242,40 +232,61 @@ export default {
 </script>
 
 <style scoped lang="scss">
-h3 {
-  font-size: 30px;
-  margin: 40px 0 0;
-}
 .user_q{
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
-  border: 3px solid rgb(255, 255, 255);
-  background-color: rgb(255, 255, 255);
+  border: 3px solid rgb(255, 249, 249);
+  background-color: rgb(247, 247, 247);
 }
 .divTestStyle{
-  font-size: 15px;
-  width: 800px;
-  height: 80px;
+  font-size: 12px;
+  // height: 13%;
+  height: 95px;
   text-align: center;
   position: center;
   border: 2px solid #81c2a5;
   border-radius: 10px;
-  
 }
-.main{
-  
-    text-align: center; /*让div内部文字居中*/
-    background-color: rgb(255, 255, 255);
-    border-radius: 15px;
-    width: 800px;
-    height: 800px;
-    margin: auto;
-    position: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+.divTestStyle1{
+  font-size: 12px;
+  // height: 10%;
+  height: 30px;
+  text-align: center;
+  position: center;
+  border: 2px solid #81c2a5;
+  border-radius: 10px;
 }
+.container {
+      padding: 0;
+      display: flex;
+      height:  100%;
+    }
+  div{
+      width:100%;
+      height: 100%;
+  }
+  .header {
+    background-color: orange;
+    height: 80px;
+  }
+  h1 {
+    margin: 10;
+    padding: 0;
+    font-size: 16px;
+    text-align: center;
+  }
+  .left {
+    background-color: lightgreen;
+    float: left;
+    flex: 7;
+  }
+  .main {
+    background-color: lightpink;
+    float: right;
+    flex: 3;
+  }
 
 
 </style>
