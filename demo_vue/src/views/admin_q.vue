@@ -16,13 +16,13 @@
             <label>
               <br>
               <button class="divTestStyle2" @click="project_Aggregate" type="submit">当前该问卷有xxx份提交记录，点击按钮获取结果。</button>
-              <br><br><br>
+              <br><br>
               <label class="divTestStyle1" type="submit">MV-One</label>
-              <br><br>
+              <br>
               <label class="divTestStyle1" type="submit">MV-Two</label>
-              <br><br>
+              <br>
               <label class="divTestStyle1" type="submit">TD-One</label>
-              <br><br>
+              <br>
               <label class="divTestStyle1" type="submit">TD-Two</label>
             </label>
         </div>

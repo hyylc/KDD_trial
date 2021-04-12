@@ -83,7 +83,7 @@ def TD(user_list,q_list,ans_list):
                     d[i[item]] += weight[item]
             collection_d = Counter(d)
             ans_temp.append(collection_d.most_common(1)[0][0])
-        print(ans_temp)
+        print('聚合结果：',ans_temp)
 
         # 和re[]比较，若答案收敛退出循环
         if re == ans_temp:
@@ -97,7 +97,7 @@ def TD(user_list,q_list,ans_list):
                 if ans_list[j][i] == ans_temp[j]:
                     count = count + 1
             weight[i] = (count)*1.0/len(q_list)
-        print(weight)
+        print('用户权重：',weight)
 
     return re,weight
 
@@ -783,6 +783,7 @@ def project():
             q_list.append(i['idq'])
             ans1.append([])
             ans2.append([])
+        print('q_list = ',q_list)
         # 1.2根据问题id确定回答问题的用户id
         # for i in range(len(q_list)):
         param = {
@@ -790,10 +791,11 @@ def project():
         }
         a = Ans()
         data = a.allans_userid(param)
-        print(data)
+
         for item in data:
             if item['user_id'] not in user_list:
                 user_list.append(item['user_id'])
+        print('user_list = ',data)
         # 1.3对应问题id和用户id的所有回答，ans1和ans2
         for i in range(len(q_list)):
             for j in user_list:
@@ -806,11 +808,13 @@ def project():
                 for item in data:
                     ans1[i].append(item['ans_one'])
                     ans2[i].append(item['ans_two']) 
+        print('ans1 = ', ans1)
+        print('ans2 = ', ans2)
+
         # 2.聚合结果
         # MV-one
         # MV-two
         Data = []
-
 
         q_MV_one = MV(ans1)
         Data.append(q_MV_one)

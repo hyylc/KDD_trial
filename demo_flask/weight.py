@@ -28,8 +28,11 @@ class Weight(object):
         except:  
             self.conn.rollback()                   # Rollback in case there is any error
         rs = self.cursor.fetchone()
+        num1 = "{:.5f}".format(param['weight1'])
+        num2 = "{:.5f}".format(param['weight2'])
+        print('num1 = ',num1,'  num2 = ',num2)
         if rs != None:
-            sql = "update weight set weight_one = " + str(param['weight1']) + " and weight_two = " + str(param['weight2']) + " where user_id = " + str(param['user_id']) + " and setq_id = " + str(param['setq_id'])
+            sql = "update weight set weight_one = " + str(num1) + ", weight_two = " + str(num2) + " where user_id = " + str(param['user_id']) + " and setq_id = " + str(param['setq_id'])
             print(sql)
             try:
                 self.cursor.execute(sql)             # 执行单条sql语句
@@ -51,7 +54,7 @@ class Weight(object):
             else:       
                 id_count = rs['MAX(idweight)']
             print(id_count)
-            sql = "insert into weight values (" + str(id_count+1) + "," + str(param['user_id']) + ","+ str(param['setq_id']) + ","+ str(param['weight1']) + "," + str(param['weight2']) + ")"
+            sql = "insert into weight values (" + str(id_count+1) + "," + str(param['user_id']) + ","+ str(param['setq_id']) + ","+ str(num1) + "," + str(num2) + ")"
             print(sql)
             try:
                 self.cursor.execute(sql)             # 执行单条sql语句
