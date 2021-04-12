@@ -809,7 +809,12 @@ def project():
         # 2.聚合结果
         # MV-one
         # MV-two
+        Data = []
+
+
         q_MV_one = MV(ans1)
+        Data.append(q_MV_one)
+
         for i in range(len(q_list)):
             param = {
                 'id_q' : q_list[i],
@@ -817,7 +822,10 @@ def project():
             }
             q = Q()
             q.set_q_MV_one(param)
+
         q_MV_two = MV(ans2)
+        Data.append(q_MV_two)
+
         for i in range(len(q_list)):
             param = {
                 'id_q' : q_list[i],
@@ -829,6 +837,8 @@ def project():
         # TD-two
         # TD要返回对应的weight列表
         q_TD_one,weight_one = TD(user_list,q_list,ans1)
+        Data.append(q_TD_one)
+
         for i in range(len(q_list)):
             param = {
                 'id_q' : q_list[i],
@@ -836,7 +846,10 @@ def project():
             }
             q = Q()
             q.set_q_TD_one(param)
+
         q_TD_two,weight_two = TD(user_list,q_list,ans2)
+        Data.append(q_TD_two)
+
         for i in range(len(q_list)):
             param = {
                 'id_q' : q_list[i],
@@ -854,6 +867,14 @@ def project():
             }
             w = Weight()
             w.new_weight(param)
+
+        resData = {
+            "resCode" : 0,
+            "data" : Data,
+            "message" : '返回聚合结果'
+        }
+        return jsonify(resData)
+        
 
 #************用户接口************
 

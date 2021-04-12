@@ -154,3 +154,14 @@ export function update_submit(param){
         }
     });
 };
+
+
+export function Aggregate(param){
+    return service.request({
+        method : "post",
+        url : "/project_MV_and_TD",//对应flask里的路由
+        data :{
+            setq_id : param.id_setq,
+        }
+    });
+};

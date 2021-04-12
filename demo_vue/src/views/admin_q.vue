@@ -10,14 +10,22 @@
         <fish-table :columns="this.columns" :data="data" :pagination="page" ></fish-table>
       </div>
       <div class="main">
-        <div class="main1">这里打印用户的回答
-          <!-- <div>
-          <fish-select v-model="singleSelectedValue" class="divTestStyle1">
-            <fish-option index="0" content="Option-1"></fish-option>
-          </fish-select>
-          </div> -->
+        <div class="main1">这里打印用户的回答或者打印以前聚合的结果
         </div>
-        <div class="main2"></div>
+        <div class="main2">
+            <label>
+              <br>
+              <button class="divTestStyle2" @click="project_Aggregate" type="submit">当前该问卷有xxx份提交记录，点击按钮获取结果。</button>
+              <br><br><br>
+              <label class="divTestStyle1" type="submit">MV-One</label>
+              <br><br>
+              <label class="divTestStyle1" type="submit">MV-Two</label>
+              <br><br>
+              <label class="divTestStyle1" type="submit">TD-One</label>
+              <br><br>
+              <label class="divTestStyle1" type="submit">TD-Two</label>
+            </label>
+        </div>
       </div>
     </div>
   </div>
@@ -27,7 +35,7 @@
 
 <script>
 import { reactive, ref, OnMounted } from "@vue/composition-api"
-import { setq_info } from "../apis/read.js"
+import { setq_info , Aggregate} from "../apis/read.js"
 
 export default {
   name: 'admin_q',
@@ -86,7 +94,16 @@ export default {
     },
     q_detail(q){
       console.log('待查询的问题id = ', q)
+    },
+    project_Aggregate(){
+        const param = {
+          id_setq : this.now_setq
+        }
+        Aggregate(param).then(resp =>{
+          console.log(resp.data.data)
+        })
     }
+
   }
 }
 </script>
@@ -122,6 +139,7 @@ export default {
     }
     .left {
       border-color: lightgreen;
+      color-interpolation-filters: auto;
       height: 100%;
       background-color: lightgreen;
       float: left;
@@ -134,13 +152,13 @@ export default {
       flex: 7;
     }
     .main1 {
-      height: 80%;
+      height: 60%;
       background-color: rgb(251, 202, 210);
       float: right;
       flex: 7;
     }
     .main2 {
-      height: 20%;
+      height: 40%;
       background-color: rgb(228, 115, 134);
       float: right;
       flex: 7;
@@ -149,10 +167,24 @@ export default {
       font-size: 12px;
       height: 10%;
       text-align: center;
-      position: center;
-      border: 2px solid #81c2a5;
+      position: relative;
+      border: 2px solid #da6758;
+      background-color: #eec8c8;
+      padding-left: 5mm;
+      padding-right: 5mm;
       border-radius: 10px;
+      border-left: 1cm;
+      left: 30%;
     }
+      .divTestStyle2{
+      font-size: 18px;
+      height: 10%;
+      text-align: center;
+      position: relative;
+      background-color: #eec8c8;
+      left: 20%;
+    }
+    
 
 
 </style>

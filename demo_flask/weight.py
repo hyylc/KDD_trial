@@ -27,8 +27,8 @@ class Weight(object):
             self.conn.commit()                     # 提交到数据库执行
         except:  
             self.conn.rollback()                   # Rollback in case there is any error
-        id_count = len(self.cursor.fetchone())
-        if id_count == 1:
+        rs = self.cursor.fetchone()
+        if rs != None:
             sql = "update weight set weight_one = " + str(param['weight1']) + " and weight_two = " + str(param['weight2']) + " where user_id = " + str(param['user_id']) + " and setq_id = " + str(param['setq_id'])
             print(sql)
             try:
@@ -39,14 +39,19 @@ class Weight(object):
                 self.conn.rollback()                   # Rollback in case there is any error
                 return False
         else:
-            sql = "select COUNT(*) from weight"
+            sql = "select MAX(idweight) from weight"
             try:
                 self.cursor.execute(sql)             # 执行单条sql语句
                 self.conn.commit()                     # 提交到数据库执行
             except:
                 self.conn.rollback()                   # Rollback in case there is any error
-            id_count = self.cursor.fetchone()['COUNT(*)']
-            sql = "insert into weight values (" + str(id_count+1) + "," + str(param['user_id']) + ","+ str(param['setq_id']) + ","+ str(param['weight']) + ")"
+            rs = self.cursor.fetchone()
+            if rs['MAX(idweight)'] == None:
+                id_count = 0
+            else:       
+                id_count = rs['MAX(idweight)']
+            print(id_count)
+            sql = "insert into weight values (" + str(id_count+1) + "," + str(param['user_id']) + ","+ str(param['setq_id']) + ","+ str(param['weight1']) + "," + str(param['weight2']) + ")"
             print(sql)
             try:
                 self.cursor.execute(sql)             # 执行单条sql语句
