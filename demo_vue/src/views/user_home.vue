@@ -54,7 +54,7 @@ export default {
             console.log("In register resp = ",resp);
             console.log("In register resp.data.message = ",resp.data.message);
             this.data = resp.data.data;
-            console.log('输出结果 = ',this.data)
+            console.log('输出结果 = ',resp.data.data)
             for (var i=0; i < resp.data.data.length; i++){
               this.data[i].id = resp.data.data[i].idsetQ;
               this.data[i].desc = resp.data.data[i].setQ_description;
